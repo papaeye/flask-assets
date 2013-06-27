@@ -3,13 +3,14 @@ from __future__ import with_statement
 import sys
 from nose import SkipTest
 from flask import Flask
-from flask.ext.assets import Environment, ManageAssets
+from flask.ext.assets import Environment
 from webassets.script import GenericArgparseImplementation
-from helpers import TempEnvironmentHelper
+from .helpers import TempEnvironmentHelper
 
 try:
-    from flaskext.script import Manager
-except:
+    from flask.ext.script import Manager
+    from flask.ext.assets import ManageAssets
+except ImportError:
     raise SkipTest()
 
 

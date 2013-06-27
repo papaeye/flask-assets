@@ -1,6 +1,6 @@
 from nose.tools import assert_raises
 from nose import SkipTest
-from helpers import TempEnvironmentHelper
+from .helpers import TempEnvironmentHelper
 
 
 class TestFilters(TempEnvironmentHelper):

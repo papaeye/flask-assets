@@ -1,4 +1,6 @@
 from __future__ import with_statement
+
+import sys
 from os import path
 from flask import _request_ctx_stack
 from flask.templating import render_template_string
@@ -17,6 +19,14 @@ __all__ = ('Environment', 'Bundle',)
 
 # We want to expose this here.
 from webassets import Bundle
+
+
+PY2 = sys.version_info[0] == 2
+
+if PY2:
+    iteritems = lambda d: d.iteritems()
+else:
+    iteritems = lambda d: iter(d.items())
 
 
 class Jinja2Filter(Filter):
@@ -221,7 +231,7 @@ class FlaskResolver(Resolver):
             try:
                 from flask.ext.s3 import url_for
             except ImportError as e:
-                print "You must have Flask S3 to use FLASK_ASSETS_USE_S3 option"
+                print("You must have Flask S3 to use FLASK_ASSETS_USE_S3 option")
                 raise e
         else:
             from flask import url_for
@@ -293,12 +303,12 @@ class Environment(BaseEnvironment):
     def from_yaml(self, path):
         """Register bundles from a YAML configuration file"""
         bundles = YAMLLoader(path).load_bundles()
-        [self.register(name, bundle) for name, bundle in bundles.iteritems()]
+        [self.register(name, bundle) for name, bundle in iteritems(bundles)]
 
     def from_module(self, path):
         """Register bundles from a Python module"""
         bundles = PythonLoader(path).load_bundles()
-        [self.register(name, bundle) for name, bundle in bundles.iteritems()]
+        [self.register(name, bundle) for name, bundle in iteritems(bundles)]
 
 try:
     from flask.ext import script

@@ -4,7 +4,7 @@ from nose.tools import assert_raises
 from flask import Flask, Blueprint
 from flask.ext.assets import Environment, Bundle
 from webassets.bundle import get_all_bundle_files
-from helpers import TempEnvironmentHelper
+from .helpers import TempEnvironmentHelper
 
 
 def test_import():
@@ -29,7 +29,7 @@ class TestUrlAndDirectory(TempEnvironmentHelper):
         TempEnvironmentHelper.setup(self)
 
         self.app = Flask(__name__, static_url_path='/app_static')
-        import test_module
+        from . import test_module
         self.blueprint = Blueprint('module', test_module.__name__,
                                    static_url_path='/mod_static',
                                    static_folder='static')
@@ -192,7 +192,7 @@ class TestBlueprints(TempEnvironmentHelper):
 
     def make_blueprint(self, name='module', import_name=None, **kw):
         if not import_name:
-            import test_module
+            from . import test_module
             import_name = test_module.__name__
 
         self.blueprint = Blueprint(name, import_name, **kw)
