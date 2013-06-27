@@ -107,17 +107,11 @@ class FlaskConfigStorage(ConfigStorage):
 
 
 def get_static_folder(app_or_blueprint):
-    """Return the static folder of the given Flask app
-    instance, or module/blueprint.
+    """Return the static folder of the given Flask app instance or blueprint.
 
     In newer Flask versions this can be customized, in older
     ones (<=0.6) the folder is fixed.
     """
-    if not hasattr(app_or_blueprint, 'static_folder'):
-        # I believe this is for app objects in very old Flask
-        # versions that did not support ccustom static folders.
-        return path.join(app_or_blueprint.root_path, 'static')
-
     if not app_or_blueprint.has_static_folder:
         # Use an exception type here that is not hidden by spit_prefix.
         raise TypeError(('The referenced blueprint %s has no static '
@@ -149,17 +143,10 @@ class FlaskResolver(Resolver):
         """See if ``item`` has blueprint prefix, return (directory, rel_path).
         """
         try:
-            if hasattr(self.env._app, 'blueprints'):
-                blueprint, name = item.split('/', 1)
-                directory = get_static_folder(self.env._app.blueprints[blueprint])
-                endpoint = '%s.static' % blueprint
-                item = name
-            else:
-                # Module support for Flask < 0.7
-                module, name = item.split('/', 1)
-                directory = get_static_folder(self.env._app.modules[module])
-                endpoint = '%s.static' % module
-                item = name
+            blueprint, name = item.split('/', 1)
+            directory = get_static_folder(self.env._app.blueprints[blueprint])
+            endpoint = '%s.static' % blueprint
+            item = name
         except (ValueError, KeyError):
             directory = get_static_folder(self.env._app)
             endpoint = 'static'

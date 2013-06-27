@@ -2,17 +2,8 @@ from flask.app import Flask
 from webassets.test import TempEnvironmentHelper as BaseTempEnvironmentHelper
 from flask.ext.assets import Environment
 
-try:
-    from flask import Blueprint
-    Module = None
-except ImportError:
-    # Blueprints only available starting with 0.7,
-    # fall back to old Modules otherwise.
-    Blueprint = None
-    from flask import Module
 
-
-__all__ = ('TempEnvironmentHelper', 'Module', 'Blueprint')
+__all__ = ('TempEnvironmentHelper')
 
 
 class TempEnvironmentHelper(BaseTempEnvironmentHelper):

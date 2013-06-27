@@ -1,10 +1,10 @@
 from __future__ import with_statement
 from nose.tools import assert_raises
 
-from flask import Flask
+from flask import Flask, Blueprint
 from flask.ext.assets import Environment, Bundle
 from webassets.bundle import get_all_bundle_files
-from helpers import TempEnvironmentHelper, Module, Blueprint
+from helpers import TempEnvironmentHelper
 
 
 def test_import():
@@ -28,17 +28,12 @@ class TestUrlAndDirectory(TempEnvironmentHelper):
     def setup(self):
         TempEnvironmentHelper.setup(self)
 
-        self.app = Flask(__name__, static_path='/app_static')
+        self.app = Flask(__name__, static_url_path='/app_static')
         import test_module
-        if not Blueprint:
-            self.module = Module(test_module.__name__, name='module',
-                                 static_path='/mod_static')
-            self.app.register_module(self.module)
-        else:
-            self.blueprint = Blueprint('module', test_module.__name__,
-                                       static_url_path='/mod_static',
-                                       static_folder='static')
-            self.app.register_blueprint(self.blueprint)
+        self.blueprint = Blueprint('module', test_module.__name__,
+                                   static_url_path='/mod_static',
+                                   static_folder='static')
+        self.app.register_blueprint(self.blueprint)
         self.env = Environment(self.app)
 
     def test_config_values_not_set_by_default(self):
@@ -149,7 +144,7 @@ class TestUrlAndDirectoryWithInitApp(object):
     """
 
     def setup(self):
-        self.app = Flask(__name__, static_path='/initapp_static')
+        self.app = Flask(__name__, static_url_path='/initapp_static')
         self.env = Environment()
         self.env.init_app(self.app)
 
@@ -200,12 +195,8 @@ class TestBlueprints(TempEnvironmentHelper):
             import test_module
             import_name = test_module.__name__
 
-        if not Blueprint:
-            self.module = Module(import_name, name=name)
-            self.app.register_module(self.module)
-        else:
-            self.blueprint = Blueprint(name, import_name, **kw)
-            self.app.register_blueprint(self.blueprint)
+        self.blueprint = Blueprint(name, import_name, **kw)
+        self.app.register_blueprint(self.blueprint)
 
     def test_blueprint_output(self):
         """[Regression] Output can point to a blueprint's static
